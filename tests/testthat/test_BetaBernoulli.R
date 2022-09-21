@@ -1,4 +1,4 @@
 library(testthat)
-library(pkg)
+library(BFone)
 
-test_check("pkg")
+test_check("BFone")
