@@ -1,1 +1,4 @@
-test_that()
+library(testthat)
+library(pkg)
+
+test_check("pkg")
