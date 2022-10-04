@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(BF1)
+library(BFone)
 
-test_check("BF1")
+test_check("BFone")
