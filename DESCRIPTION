@@ -1,12 +1,12 @@
 Package: BFone
-Title: The R Package Offers ""
+Title: The R Package Offers "Functions for updating conjugate priors for Bayesian analysis"
 Version: 1.0.0
 Authors@R: 
-    person(given = "",
-           family = "",
+    person(given = "Catherine",
+           family = "Forbes",
            role = c("aut", "cre"),
-           email = "",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "catherine.forbes@monash.edu",
+           comment = c(ORCID = "0000-0003-3830-5865"))
 Description: The package **BFone** is an R package 
 License: GPL (>= 3)
 Encoding: UTF-8
@@ -19,9 +19,7 @@ Imports:
 Suggests: 
     rmarkdown,
     knitr,
-    palmerpenguins,
     tidyverse,
-    unikn,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
