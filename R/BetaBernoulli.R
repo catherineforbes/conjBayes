@@ -3,7 +3,7 @@
 #' @param y A vector of data, can be empty.
 #' @param a0 A number, the Beta prior first shape parameter.
 #' @param b0 A number, the Beta prior second shape parameter.
-#' @return out A list with element a1 and b1, the shape parameters for the posterior distribution.
+#' @return out A list with element a1 and b1, the shape parameters for the posterior Beta distribution.
 #' @examples
 #' BetaBernoulli(y = numeric(), a0 = 0.5, b0 = 0.5)
 #' BetaBernoulli(y = c(1,1,1,0,0), a0 = 0.5, b0 = 0.5)
