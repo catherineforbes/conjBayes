@@ -32,7 +32,7 @@ GammaPoisson.f <- function(y = numeric(), a0, b0,
   if(plot == TRUE){
     # would be good to have some way to automate the y-limits on the plot
     # perhaps check if end points are higher than the middle and restrict to the
-    # lower of the two
+
 
     xlims <- qgamma(c(0.001,0.999), shape = a1, rate = b1)
     xgrid <- seq(xlims[1], xlims[2], 0.001)
