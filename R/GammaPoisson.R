@@ -1,8 +1,8 @@
 #' Calculates conjugate Gamma posterior from Gamma prior and Poisson data
 #'
-#' @param y A vector of data, can be empty.
-#' @param a0 A number, the Gamma prior shape parameter.
-#' @param b0 A number, the Gamma prior rate parameter (=1/scale parameter).
+#' @param y A vector of non-negative integer count data, can be empty.
+#' @param a0 A positive number, the Gamma prior shape parameter.
+#' @param b0 A positive number, the Gamma prior rate parameter (=1/scale parameter).
 #' @return out A list with element a1 and b1, the shape parameters for the posterior Gamma distribution.
 #' @examples
 #' GammaPoisson(y = numeric(), a0 = 2, b0 = 1)
