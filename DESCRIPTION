@@ -1,5 +1,5 @@
 Package: BFone
-Title: The R Package Offers "Functions for updating conjugate priors for Bayesian analysis"
+Title: The R Package Offers "Functions for updating conjugate priors for Bayesian analysis".
 Version: 1.0.0
 Authors@R: 
     person(given = "Catherine",
