@@ -1,0 +1,70 @@
+---
+title: "my-vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(conjBayes)
+```
+
+## About conjBayes
+
+Given data, the conjBayes packages provides functions for updating conjugate Bayesian prior distributions to the posterior distribution. There are four main functions. The first is BetaBernoulli. Let's see how it works!
+
+```{r}
+BetaBernoulli(y = c(1, 1, 0, 1, 0, 0, 0, 1), a0 = 1, b0 = 1)
+```
+
+Let's look at an example from the faraway package data set. 
+
+
+```{r}
+library(faraway)
+data(gavote)
+
+library(tidyverse)
+sgavote <- gavote %>% summarise(gore = sum(gore), bush = sum(bush))
+head(sgavote)
+```
+
+
+We need to establish our prior belief about voting in this election. Let's think of the probability that any person randomly selected from the voting population would vote for Gore instead of Bush, and call this probability "p". Then because it is a probability, "p" must be a number between zero and one. 
+
+What prior belief do we have about "p"? Perhaps you think "p" is close to 50%, with only
+
+```{r, echo=FALSE}
+
+pp <- seq(0.001,0.999, by=0.001)
+betapp <- dbeta(pp, 500, 500)
+
+plot(pp, betapp, type="l")
+
+
+```
+
+
+```{r}
+results <- BetaBinomial(y=gavote$gore[1:3,], n=sum(gavote$gore[1:3,]+gavote$bush[1:3,]), a0=500, b0=500)
+results
+```
+```{r}
+
+#pp <- seq(0.001,0.999, by=0.001)
+betapp <- dbeta(pp, results$a1, results$b1)
+
+plot(pp, betapp, type="l")
+
+
+```
+
