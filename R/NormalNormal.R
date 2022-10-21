@@ -4,6 +4,7 @@
 #' @param mu0 A real number, the Normal prior mean parameter.
 #' @param tau0 A positive number, the Normal prior standard (std) deviation parameter.
 #' @param sigma A positive number, std deviation of the Normal data distribution, assumed known.
+#'
 #' @return out A list with element mu1 and tau1, the mean and std deviation parameters for the posterior Normal distribution.
 #' @examples
 #' NormalNormal(y = numeric(), mu0 = 2, tau0 = 1, sigma = 2)
