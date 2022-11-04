@@ -68,3 +68,13 @@ plot(pp, betapp, type="l")
 
 ```
 
+## Fundametals of Bayesian data analysis in r (Example: Probabilty that we have found a vaccine that cures the zombie outbreak)
+
+> https://rpubs.com/klinares/443186
+
+
+
+
+
+
+
