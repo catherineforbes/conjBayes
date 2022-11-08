@@ -26,55 +26,108 @@ Given data, the conjBayes packages provides functions for updating conjugate Bay
 BetaBernoulli(y = c(1, 1, 0, 1, 0, 0, 0, 1), a0 = 1, b0 = 1)
 ```
 
-Let's look at an example from the faraway package data set. 
+# 
 
-
-```{r}
-library(faraway)
-data(gavote)
-
-library(tidyverse)
-sgavote <- gavote %>% summarise(gore = sum(gore), bush = sum(bush))
-head(sgavote)
-```
-
-
-We need to establish our prior belief about voting in this election. Let's think of the probability that any person randomly selected from the voting population would vote for Gore instead of Bush, and call this probability "p". Then because it is a probability, "p" must be a number between zero and one. 
-
-What prior belief do we have about "p"? Perhaps you think "p" is close to 50%, with only
-
-```{r, echo=FALSE}
-
-pp <- seq(0.001,0.999, by=0.001)
-betapp <- dbeta(pp, 500, 500)
-
-plot(pp, betapp, type="l")
-
-
-```
-
-
-```{r}
-results <- BetaBinomial(y=gavote$gore[1:3,], n=sum(gavote$gore[1:3,]+gavote$bush[1:3,]), a0=500, b0=500)
-results
-```
-```{r}
-
-#pp <- seq(0.001,0.999, by=0.001)
-betapp <- dbeta(pp, results$a1, results$b1)
-
-plot(pp, betapp, type="l")
-
-
-```
 
 ## Fundametals of Bayesian data analysis in r (Example: Probabilty that we have found a vaccine that cures the zombie outbreak)
 
 > https://rpubs.com/klinares/443186 
 
 
+# PoissonGamma Example
+
+```{r}
+data()
+discoveries
+library(tidyverse)
+
+as_tibble(discoveries) %>% ggplot(aes(x=discoveries)) + geom_bar()
+
+plot(discoveries, ylab = "Number of important discoveries", las = 1)
+mean(discoveries)
+
+range(discoveries)
+
+qgamma(p=0.5, shape=12, rate=1)
+
+xx <- seq(0.1,100,0.1)
+plot(xx, pgamma(xx, shape=12, rate=1))
+plot(xx, dgamma(xx, shape=12, rate=1))
+plot(xx, dgamma(xx, shape=12, rate=1),type="l")
+plot(xx, dgamma(xx, shape=12, rate=0.5),type="l")
+plot(xx, dgamma(xx, shape=12, rate=2),type="l")
+
+library(conjBayes)
+GammaPoisson(y=discoveries, a0=12, b0=2)
+
+lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
+plot(xx, dgamma(xx, shape=12, rate=2),type="l",xlim=c(0,20))
+lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
+plot(xx, dgamma(xx, shape=12, rate=2),type="l",xlim=c(0,15))
+lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
+plot(xx, dgamma(xx, shape=12, rate=2),type="l",xlim=c(0,15),ylim=c(0,1))
+lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
+plot(xx, dgamma(xx, shape=12, rate=2),type="l",xlim=c(0,15),ylim=c(0,2))
+lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
+plot(xx, dgamma(xx, shape=12, rate=2),type="l",xlim=c(0,15),ylim=c(0,2.5))
+lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
+rug(discoveries)
+rug(jitter(discoveries),col="red")
+
+```
 
 
 
+## Zombie Apocalypse (from citation...)
+
+```{r}
+set.seed(78972)
+p_success <- .15 # probability of success
+n_zombies <- 13 # trails
+
+# simulate data
+data <- c()
+for(zombie in 1:n_zombies){
+  # save if prop is between 0 & 1 and greater than our prob. of success
+  data[zombie] <- runif(1, min=0, max=1) < p_success 
+}
+
+data <- as.numeric(data)
+data # individual trial outcomes --> we need to use BetaBernoulli function
+```
+
+
+```{r}
+# set the prior
+# uniform prior over (0,1) is Beta(a0=1,b0=1)
+
+BBpost <- BetaBernoulli(y=data, a0=1, b0=1)
+```
+
+# plot the posterior distribution (a Beta(a1=3, b1=12))
+
+```{r}
+
+bb <- seq(0.001, 0.999, 0.001)
+post <- dbeta(bb, shape1 = BBpost$a1, shape2=BBpost$b1)
+plot(bb, post, type="l", col="blue")
+lines(bb, dbeta(bb, shape1=1, shape2=1))
+abline(v=mean(data))
+mean(data)
+```
+
+What if you only knew the number of "successes" out of n trials? Say you knew there were 4 successes in n=13 trials. Then use the BetaBinomial function.
+
+```{r}
+
+BBpost <- BetaBinomial(y=4, n=13, a0=1, b0=1)
+BBpost
+
+post <- dbeta(bb, shape1 = BBpost$a1, shape2=BBpost$b1)
+plot(bb, post, type="l", col="blue")
+lines(bb, dbeta(bb, shape1=1, shape2=1))
+abline(v=4/13)
+
+```
 
 
