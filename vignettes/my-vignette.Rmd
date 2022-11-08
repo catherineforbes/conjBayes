@@ -72,9 +72,7 @@ plot(pp, betapp, type="l")
 
 > https://rpubs.com/klinares/443186 
 
-
-
-
-
+## how to create a vignette
+## how to get the package pdf file (manual) 
 
 
