@@ -1,5 +1,5 @@
 ---
-title: "conjBayes"
+title: "Guide to conjBayes"
 author: "Catherine Forbes"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,81 +9,159 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r, include = FALSE, }
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
-)
+  comment = "#>", fig.width = 6, fig.height=3, message = FALSE, error = FALSE, comment = FALSE, warning = FALSE)
 ```
 
-```{r setup}
-library(conjBayes)
-```
+## Introduction
 
-## About conjBayes
+The conjBayes packages provides functions for updating conjugate Bayesian prior distributions. 
 
-Given data, the conjBayes packages provides functions for updating conjugate Bayesian prior distributions to the posterior distribution. There are four main functions. The first is BetaBernoulli. Let's see how it works!
+When data are modelled conditional on an unknown parameter, say $\theta$, the marginal distribution assumed for $\theta$ is known as the **prior** distribution and the **posterior** distribution is the conditional distribution for $\theta$ given the observed data. This posterior distribution is determined by Bayes theorem. When the posterior distribution can be calculated in closed form, and belongs to the same distributional family as the prior distribution, then the prior is called a **conjugate prior** for the given data model. 
 
+Each conjBayes function reports the hyperparameters of the relevant prior distribution corresponding to the prior and model combination as indicated by the function name. Let's look at an example to see how the functions work.
+
+## Gamma prior for Poisson data model
+
+Consider the dataset `discoveries`, which contains the number of "great" inventions and scientific discoveries in each year of the 100 year period 1860 to 1959. 
 ```{r}
-BetaBernoulli(y = c(1, 1, 0, 1, 0, 0, 0, 1), a0 = 1, b0 = 1)
-```
-
-# 
-
-
-## Fundametals of Bayesian data analysis in r (Example: Probabilty that we have found a vaccine that cures the zombie outbreak)
-
-> https://rpubs.com/klinares/443186 
-
-
-# PoissonGamma Example
-
-```{r}
-data()
 discoveries
+```
+
+Since the data values are counts, they are integers and a Poisson model can be considered. The Poisson model has a single parameter, $\theta=\lambda$, representing the expected number of discoveries in any given year. The Gamma(shape, rate) distribution is the conjugate prior for a Poisson model when the data are assumed to be independent and identically distributed.[^1] In this case, if we take hyperparameter values shape = $a_0$ and rate = $b_0$, then the posterior distribution will also be a Gamma distribution with updated hyperparameters shape = $a_1$ and rate = $b_1$. The **GammaPoisson** function will calculate the updated values $a_1$ and $b_1$ for us. 
+
+```{r echo=FALSE}
+options(digits = 3)
+```
+
+What values of $a_0$ an $b_0$ could we use for the `discoveries` data? It is a matter of person choice. If we choose $a_0=1$ and $b_0=0.1$, then we are assuming
+$\Pr(\lambda \leq 10) =$ `r pgamma(q=10, shape=1, rate=0.1)` and $\Pr( \lambda \leq$ `r qgamma(p = 0.99, shape = 1, rate = 0.1)` $)=0.99$, reflecting a large degree of uncertainty in $\lambda$. These prior probabilities can be confirmed:
+```{r}
+pgamma(q = 10, shape = 1, rate = 0.1)
+qgamma(p = 0.99, shape = 1, rate = 0.1)
+```
+A plot of this Gamma(shape = 1, rate = 0.2) prior distribution is shown below:
+```{r fig.cap="Gamma(shape = 1, rate = 0.2) prior density function for Poisson model."}
 library(tidyverse)
-
-as_tibble(discoveries) %>% ggplot(aes(x=discoveries)) + geom_bar()
-
-plot(discoveries, ylab = "Number of important discoveries", las = 1)
-mean(discoveries)
-
-range(discoveries)
-
-qgamma(p=0.5, shape=12, rate=1)
-
-xx <- seq(0.1,100,0.1)
-plot(xx, pgamma(xx, shape=12, rate=1))
-plot(xx, dgamma(xx, shape=12, rate=1))
-plot(xx, dgamma(xx, shape=12, rate=1),type="l")
-plot(xx, dgamma(xx, shape=12, rate=0.5),type="l")
-plot(xx, dgamma(xx, shape=12, rate=2),type="l")
-
 library(conjBayes)
-GammaPoisson(y=discoveries, a0=12, b0=2)
 
-lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
-plot(xx, dgamma(xx, shape=12, rate=2),type="l",xlim=c(0,20))
-lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
-plot(xx, dgamma(xx, shape=12, rate=2),type="l",xlim=c(0,15))
-lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
-plot(xx, dgamma(xx, shape=12, rate=2),type="l",xlim=c(0,15),ylim=c(0,1))
-lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
-plot(xx, dgamma(xx, shape=12, rate=2),type="l",xlim=c(0,15),ylim=c(0,2))
-lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
-plot(xx, dgamma(xx, shape=12, rate=2),type="l",xlim=c(0,15),ylim=c(0,2.5))
-lines(xx, dgamma(xx, shape=322, rate=102), type="l", col="blue")
-rug(discoveries)
-rug(jitter(discoveries),col="red")
+lambda <- seq(0.01, 25, 0.01)
+densprior <- dgamma(x = lambda, shape = 1, rate = 0.2)
+pt <- tibble(lambda, densprior)
+
+p1 <- pt %>% ggplot(aes(x = lambda, y = densprior)) +
+  geom_line(color = "blue") +
+  geom_vline(xintercept = 0) +
+  geom_hline(yintercept = 0) +
+  xlab(expression(lambda)) +
+  ylab(expression(paste("density of ",lambda))) +
+  geom_area(fill = "blue", alpha=0.3)
+p1  
 
 ```
 
 
+We use the **GammaPoisson** function to update the Gamma distribution hyperparameters, given the data values in `discoveries`. A bar chart of the data is shown below:
 
-## Zombie Apocalypse (from citation...)
+[^1]: We ignore the time-series aspect of the data.
+
+```{r fig.cap="Bar chart of annual 'great' discoveries counts, for 1860-1959."}
+
+dt <- tibble(y = as.numeric(discoveries)) 
+
+p <- dt %>% ggplot(aes(y)) + 
+  geom_bar() +
+  xlab("Number of discoveries per year")
+p
+
+```
+
+And the updated hyperparameters are computed as follows:
 
 ```{r}
-set.seed(78972)
+posterior <- GammaPoisson(y=dt$y, a0 = 1, b0 = 0.2)
+posterior$a1
+posterior$b1
+```
+Having updated the prior using the data, we are more certain about the ('true' population average) number of discoveries each year, with $\Pr(2.78 \leq \lambda \leq 3.475) =0.95.$ To confirm: 
+```{r}
+pgamma(q = 3.475, shape = posterior$a1, rate = posterior$b1) - pgamma(q = 2.78, shape = posterior$a1, rate = posterior$b1)
+```
+We can plot the prior and posterior densities together with the location of the maximum likelihood estimator (which is the sample average for the Poisson model) and see how our probabilities were updated:
+
+```{r fig.cap="Gamma(shape = 311, rate = 100.2) posterior density, with Gamma(shape = 1, rate = 0.2) prior density function, for Poisson model for discoveries data."}
+pt <- pt %>% mutate(denspost = dgamma(lambda, shape = posterior$a1, rate = posterior$b1))
+
+p1 + geom_line(data = pt, aes(x = lambda, y = denspost), color="magenta") +
+  geom_area(data = pt, aes(x = lambda, y = denspost),fill = "magenta", alpha=0.3) +
+  annotate("text", label="prior = Gamma(shape = 1, rate = 0.2)", x=11, y=0.2, color="blue") +
+  annotate("text", label="posterior = Gamma(shape = 311, rate = 100.2)", x=10.5, y=1.5, color="magenta") +
+    geom_vline(xintercept = mean(discoveries)) +
+  annotate("text", label="MLE (sample mean): 3.1", x=7, y=0.7) + 
+  xlim(c(0,20))
+
+  
+```
+
+
+\bigskip
+
+## Beta prior for Bernoulli data model
+
+Let's consider another example, this time with n binary outcomes, each independent with probability of "success' p. That is, assume the outcomes are independent and identically distributed **Bernoulli**(p) random variables. The Beta(shape1, shape2) is the conjugate prior for this model. If we take as the prior hyperparameters shape1 = $a_0$ and shape2 = $b_0$, then the posterior distribution will also be a Beta distributiond, and we can use the **BetaBinomial** function to get the values of the updated hyperparameters.
+
+Let's simulate n=10 binary outcomes from a Bernoulli(p=0.2) distribution, and suppose our prior distribution is Beta(shape=1, rate=1), which corresponds to a uniform density over the interval (0, 1). We have:
+```{r}
+set.seed(12345)
+y <- rbinom(n=10, size=1, prob=0.2)
+y
+
+posterior <- BetaBernoulli(y = y, a0 = 1, b0 = 1)
+posterior
+```
+
+```{r eval=FALSE, echo=FALSE}
+set.seed(12345)
+y <- rbernoulli(n = 10, p=0.2)
+posterior <- BetaBernoulli(y = y, a0 = 1, b0 = 1)
+y
+posterior
+```
+
+A plot of the prior and posterior densities are shown below.
+
+```{r}
+pp <- seq(0.001, 0.999, 0.01)
+densprior <- dbeta(x = pp, shape1 = 1, shape2 = 1)
+denspost <- dbeta(x = pp, shape1 = posterior$a1, shape2 = posterior$b1)
+pt2 <- tibble(pp, densprior, denspost)
+
+p2 <- pt2 %>% ggplot(aes(x = pp, y = densprior)) +
+  geom_line(color = "blue") +
+  geom_vline(xintercept = 0) +
+  geom_hline(yintercept = 0) +
+  xlab("p") +
+  ylab("density of p") +
+  geom_area(fill = "blue", alpha=0.3)
+
+p2 + geom_line(data = pt2, aes(x = pp, y = denspost), color="magenta") +
+  geom_area(data = pt2, aes(x = pp, y = denspost),fill = "magenta", alpha=0.3) +
+  annotate("text", label="prior = Beta(shape1 = 1, shape2 = 1)", x=0.8, y=1.2, color="blue") +
+  annotate("text", label="posterior = Beta(shape = 4, rate = 8)", x=0.65, y=2.5, color="magenta") +
+  geom_vline(xintercept = mean(y)) +
+  annotate("text", label="MLE (sample proportion of successes): 0.3", x=0.6, y=0.2)
+```
+
+## Example 3: Zombie Apocalypse
+
+A final (and fun!) example is described in the **RPub** "Fundamentals of Bayesian Data Analysis in R", available at https://rpubs.com/klinares/443186. We want to know the probability we have found a vaccine to cure a zombie outbreak. 
+
+Below we use the code provided in the RPub to generate 13 vaccine outcomes, where a success corresponds to a cure.
+
+```{r}
+set.seed(789)
 p_success <- .15 # probability of success
 n_zombies <- 13 # trails
 
@@ -95,43 +173,35 @@ for(zombie in 1:n_zombies){
 }
 
 data <- as.numeric(data)
-data # individual trial outcomes --> we need to use BetaBernoulli function
+data
+mean(data) # our posterior is close to our theorized probability of success of .15
+sum(data) # number of successes
 ```
-
-
+Since we have 3 successes out of 13 independent trials, we can use the **BetaBinomial** function from the **conjBayes** package. This time let's assume our prior is Beta(shape1 = 3, shape2 = 97), which corresponds to assuming the expected probability of success (that the zombie outbreak vaccine will work on any individual) is 0.03 and (before we see any data...) $\Pr(p \leq$ `r qbeta(p = 0.99, shape1 = 3, shape2 = 97)` $)=0.99$. Then we have
 ```{r}
-# set the prior
-# uniform prior over (0,1) is Beta(a0=1,b0=1)
+#pp <- seq(0.001, 0.999, 0.01)
+densprior <- dbeta(x = pp, shape1 = 3, shape2 = 97)
+posterior <- BetaBinomial(y=mean(data), a0=3, b0=97)
+posterior
 
-BBpost <- BetaBernoulli(y=data, a0=1, b0=1)
-```
+denspost <- dbeta(x = pp, shape1 = posterior$a1, shape2 = posterior$b1)
+pt3 <- tibble(pp, densprior, denspost)
 
-# plot the posterior distribution (a Beta(a1=3, b1=12))
+p3 <- pt3 %>% ggplot(aes(x = pp, y = densprior)) +
+  geom_line(color = "blue") +
+  geom_vline(xintercept = 0) +
+  geom_hline(yintercept = 0) +
+  xlab("p") +
+  ylab("density of p") +
+  geom_area(fill = "blue", alpha=0.3)
 
-```{r}
-
-bb <- seq(0.001, 0.999, 0.001)
-post <- dbeta(bb, shape1 = BBpost$a1, shape2=BBpost$b1)
-plot(bb, post, type="l", col="blue")
-lines(bb, dbeta(bb, shape1=1, shape2=1))
-abline(v=mean(data))
-mean(data)
-```
-
-What if you only knew the number of "successes" out of n trials? Say you knew there were 4 successes in n=13 trials. Then use the BetaBinomial function.
-
-```{r}
-
-BBpost <- BetaBinomial(y=4, n=13, a0=1, b0=1)
-BBpost
-
-post <- dbeta(bb, shape1 = BBpost$a1, shape2=BBpost$b1)
-plot(bb, post, type="l", col="blue")
-lines(bb, dbeta(bb, shape1=1, shape2=1))
-abline(v=4/13)
+p3 + geom_line(data = pt2, aes(x = pp, y = denspost), color="magenta") +
+  geom_area(data = pt2, aes(x = pp, y = denspost),fill = "magenta", alpha=0.3) +
+  annotate("text", label="prior = Beta(shape1 = 1, shape2 = 1)", x=0.3, y=25, color="blue") +
+  annotate("text", label="posterior = Beta(shape = 4, rate = 8)", x=0.71, y=3, color="magenta") +
+  geom_vline(xintercept = mean(y)) +
+  annotate("text", label="MLE (sample proportion of successes): 0.3", x=0.6, y=10)
+  
 
 ```
 
-
-## how to create a vignette
-## how to get the package pdf file (manual) 
