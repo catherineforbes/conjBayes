@@ -38,9 +38,9 @@ h1, h2, h3 {
 .remark-slide-content {
   background-color: #043d31;
   font-size: 23px;
-
-
-
+  
+  
+  
   padding: 1em 4em 1em 4em;
 }
 .remark-slide-content h1 {
@@ -55,19 +55,19 @@ h1, h2, h3 {
 .remark-code, .remark-inline-code {
   font-family: Droid Mono, 'Lucida Console', Monaco, monospace;
 }
-.remark-code {
-  font-size: 20px;
+.remark-code { 
+  font-size: 20px; 
   color: #800080!important;
   background-color: #FEF9F0!important;
 }
 
-.remark-code .overflow {
+.remark-code .overflow { 
   overflow-y: scroll;
   height: 500px;
   margin: 0em 0em -1em -1em;
 }
 
-
+  
 .code .remark-code, .code .remark-code * {
  background-color: #fdf5e6 !important;
 }
@@ -81,13 +81,13 @@ h1, h2, h3 {
   opacity: 1;
   font-size: 0.9em;
 }
-strong{color:#f7efd2;}
+strong{color:#043d31;}
 a, a > code {
-  color:#f7efd2;
+  color: #043d31;
   text-decoration: none;
 }
 .footnote {
-
+  
   position: absolute;
   bottom: 3em;
   padding-right: 4em;
@@ -98,7 +98,7 @@ a, a > code {
 .inverse {
   background-color: #baf5e8;
   color: #E9EBEE;
-
+  
 }
 .inverse h1, .inverse h2, .inverse h3 {
   color: #E9EBEE;
@@ -112,17 +112,17 @@ a, a > code {
 }
 .title-slide h1 {
   text-shadow: none;
-  color: #274b6b;
+  color: #F7F8FA;
   margin-left: +10px;
 }
 .title-slide h2 {
   text-shadow: none;
-  color: #274b6b;
+  color: #F7F8FA;
   margin-left: +10px;
 }
 .title-slide h3 {
   text-shadow: none;
-  color: #274b6b;
+  color: #F7F8FA;
   margin-left: +10px;
 }
 .title-slide .remark-slide-number {
@@ -217,7 +217,7 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
 body{
   font-family: Helvetica;
   font-size: 13pt;
-  color: #FFFFFF;
+  color: #021c16;
 }
 
 h1 {
@@ -247,13 +247,13 @@ h1 {
 
 
 /******************
- *
+ * 
  * Coloured content boxes
  *
  ****************/
 
 
-.content-box {
+.content-box { 
     box-sizing: content-box;
     	background-color: #e2e2e2;
   /* Total width: 160px + (2 * 20px) + (2 * 8px) = 216px
@@ -293,7 +293,7 @@ h1 {
 }
 
 .content-box-grey {
-  /* set opacity: uncomment rgba line */
+  /* set opacity: uncomment rgba line */ 
   /* alter opacity with last decimal value of rgba */
 	background-color: rgb(181, 181, 181);
   /* background-color: rgba(181, 181, 181,.85); */

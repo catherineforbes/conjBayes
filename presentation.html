@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>ETC5543 Business analytics and creative activity</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Pranali Angne (32355068)" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# ETC5543 Business analytics and creative activity
+]
+.subtitle[
+## The conjBayes R package development for updating conjugate priors for Bayesian analysis
+]
+.author[
+### Pranali Angne (32355068)
+]
+.institute[
+### Monash University, Clayton
+]
+
+---
+
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+background-position: 50% 50%
+
+
+
+class: center, middle
+# Introduction
+
+**AIM**: The aim of this internship was to develop a whole new package named **conjBayes** for the unit ETC5410/ETC4541 - Bayesian inference and data analysis. This R Package Offers "Functions for updating conjugate priors for Bayesian analysis".
+
+
+&lt;img src="images/unit.png" width="95%" style="display: block; margin: auto;" /&gt;
+
+
+---
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+class: left, top
+
+**OBJECTIVE**: 
+
++ The package *conjBayes* is an R package designed to help students (understand) and apply Conjugate Bayesian models. 
+
++ The project my supervisor had in mind involves creating a package of R programs that she has written to do Markov chain Monte Carlo algorithms to fit various Bayesian statistical models. 
+
++ In particular my supervisor was looking for a package that do 
+1. Beta/ Binomial (Beta/ Bernoulli)
+
+2. Gamma Exponential 
+
+3. Gamma/Poisson
+
+4. Normal/Normal
+
+5. Normal Inverse Gamma
+
+
+---
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+class: left, top
+
+# The development of the *conjBayes* package
+
++ The *conjBayes* packages provides functions for updating conjugate Bayesian prior distributions to the posterior distribution. 
+ 
++ All the functions have been specially formatted using the *roxygen* format above the source code for each function. 
+ 
++ Then these defined functions in this package have been added to the corresponding test files converting the existing unit tests cases to *testthat* format.  
+ 
++ During the process of developing *conjBayes* package, a few R packages were applied, including *usethis*, *devtools*, *roxygen2*, *pkgdown*, and *testthat*.
+
+---
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+## Unit test format transformation
+
++ To carry out unit testing the *testthat* package was used and create new unit tests for each of the six tested functions as the functions were being created. 
+
++ All the functions have been tested and they work perfectly fine. 
+
+
+---
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+# Vignette of *conjBayes* package
+
+**There are four sections the vignette that contain the explanation of the two most important functions in the *conjBayes* package:**
+ 
+.content-box-duke-green[
+1. Introduction
+2. Gamma prior for Poisson data model
+3. Beta prior for Bernoulli data model
+4. and an example of Zombie Apocalypsein]
+
+**Introduction:**
+
+The conjBayes packages provides functions for updating conjugate Bayesian prior distributions. Each conjBayes function reports the hyperparameters of the relevant prior distribution corresponding to the prior and model combination as indicated by the function name. 
+
+**Let's look at an example to see how the functions work.**
+---
+
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+## Gamma prior for Poisson data model
+
+Consider the dataset `discoveries`, which contains the number of "great" inventions and scientific discoveries in each year of the 100 year period 1860 to 1959. 
+
+
+```
+## Time Series:
+## Start = 1860 
+## End = 1959 
+## Frequency = 1 
+##   [1]  5  3  0  2  0  3  2  3  6  1  2  1  2  1  3  3  3  5  2  4  4  0  2  3  7
+##  [26] 12  3 10  9  2  3  7  7  2  3  3  6  2  4  3  5  2  2  4  0  4  2  5  2  3
+##  [51]  3  6  5  8  3  6  6  0  5  2  2  2  6  3  4  4  2  2  4  7  5  3  3  0  2
+##  [76]  2  2  1  3  4  2  2  1  1  1  2  1  4  4  3  2  1  4  1  1  1  0  0  2  0
+```
+
+```
+## [1] 0.632
+```
+
+```
+## [1] 46.1
+```
+
+---
+
+
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+**A plot of this Gamma(shape = 1, rate = 0.2) prior distribution is shown below:**
+
+.pull-left[
+![](presentation_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+We use the **GammaPoisson** function to update the Gamma distribution hyperparameters, given the data values in `discoveries`.
+]
+---
+
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+# And the updated hyperparameters are computed as follows:
+
+
+ 
+Having updated the prior using the data, we are more certain about the ('true' population average) number of discoveries each year, with `\(\Pr(2.78 \leq \lambda \leq 3.475) =0.95.\)` To confirm: 
+
+We can plot the prior and posterior densities together with the location of the maximum likelihood estimator (which is the sample average for the Poisson model) and see how our probabilities were updated:
+
+
+
+--
+
+???
+
+
+---
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+class: left, top
+# Beta prior for Bernoulli data model
+
+Let's consider another example, this time with n binary outcomes, each independent with probability of "success' p. That is, assume the outcomes are independent and identically distributed **Bernoulli**(p) random variables. 
+
+The Beta(shape1, shape2) is the conjugate prior for this model. If we take as the prior hyperparameters shape1 = `\(a_0\)` and shape2 = `\(b_0\)`, then the posterior distribution will also be a Beta distributiond, and we can use the **BetaBinomial** function to get the values of the updated hyperparameters.
+
+
+---
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+class: left, top
+
+Let's simulate n=10 binary outcomes from a Bernoulli(p=0.2) distribution, and suppose our prior distribution is Beta(shape=1, rate=1), which corresponds to a uniform density over the interval (0, 1). We have:
+
+
+```r
+set.seed(12345)
+y &lt;- rbinom(n=10, size=1, prob=0.2)
+y
+```
+
+```
+##  [1] 0 1 0 1 0 0 0 0 0 1
+```
+
+```r
+posterior &lt;- BetaBernoulli(y = y, a0 = 1, b0 = 1)
+posterior
+```
+
+```
+## $a1
+## [1] 4
+## 
+## $b1
+## [1] 8
+```
+---
+
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+class: left, top
+
+
+
+A plot of the prior and posterior densities are shown below.
+
+![](presentation_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+---
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+class: left, top
+
+# Example 3: Zombie Apocalypse
+
+A final (and fun!) example is described in the **RPub** "Fundamentals of Bayesian Data Analysis in R", available at https://rpubs.com/klinares/443186. We want to know the probability we have found a vaccine to cure a zombie outbreak. 
+
+Below we use the code provided in the RPub to generate 13 vaccine outcomes, where a success corresponds to a cure.
+
+
+```
+##  [1] 0 1 1 0 0 1 0 0 0 0 0 0 0
+```
+
+```
+## [1] 0.231
+```
+
+```
+## [1] 3
+```
+
+---
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+class: left, top
+
+.pull-left[
+
++ Since we have 3 successes out of 13 independent trials, we can use the **BetaBinomial** function from the **conjBayes** package. 
+
++ This time let's assume our prior is Beta(shape1 = 3, shape2 = 97), which corresponds to assuming the expected probability of success (that the zombie outbreak vaccine will work on any individual) is 0.03 and (before we see any data...) `\(\Pr(p \leq\)` 0.082 `\()=0.99\)`. Then we have]
+
+.pull-right[
+
+
+```
+## $a1
+## [1] 3.23
+## 
+## $b1
+## [1] 107
+```
+
+![](presentation_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+]
+
+
+---
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1742&amp;q=80)
+
+class: center, middle
+
+# Thank You!
+
+![](https://media2.giphy.com/media/ZrlYxeVZ0zqkU/giphy.gif)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
