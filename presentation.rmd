@@ -1,0 +1,377 @@
+---
+title: "ETC5543 Report - The conjBayes R package development"
+subtitle: ""
+author: "Pranali Angne, Student ID: 32355068"
+institute: " Monash University, Clayton"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: css/style.css
+    yolo: FALSE
+---
+
+
+background-position: 50% 50%
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+class: center, middle
+
+.content-box-soft[
+# Introduction 
+]
+
+As we know, that it has been almost 2 years since the world is under a pandemic and is fighting the COVID-19 disease. Australia is one of few countries to have been able to control the disease and has experienced less mortality percentage as compared to other countries. One prominent state here is Victoria.
+
+```{r , echo = FALSE, fig.align="center",  out.width = '67%'}
+knitr::include_graphics("images/vic.jpeg")
+```
+
+.tiny[<span>Photo on  <a href="https://www.hindustantimes.com/world-news/australias-victoria-sees-record-daily-surge-in-covid-19-cases-101634168054966.html">Hindustan Times (India)</a></span>]
+
+
+---
+
+*Therefore, in the analysis, we will study about the recent scenario in Victoria.*
+
+.content-box-soft[
+ ### AIM: To study the trend of spreading cases in Victorian Community from May'21-Sep'21
+]
+
+**Data Used**: Three data sets have been used for the analysis. Out of which, two have been  extracted from [coronavirus.vic,gov.au](https://www.coronavirus.vic.gov.au/victorian-coronavirus-covid-19-data) and contains the data related to age group, Local Govt. Areas, postcode and resons of aquiring the COVID-19 disease. 
+
+The third data has been extracted from [covid19data.com.au](https://www.covid19data.com.au/victoria) and contains the overall no. of cases and tests. 
+
+```{r , echo = FALSE, fig.align="center",  out.width = '80%'}
+knitr::include_graphics("images/c.jpg")
+```
+
+```{r, reading-data, echo = FALSE, message = FALSE, warning = FALSE}
+
+library(readr)
+library(tidyverse)
+library(here)
+library(lubridate)
+library(ggpubr)
+library(sf)
+library(plotly)
+
+# Reading data
+Data1 <- read_csv(here::here("data/NCOV_COVID_Cases_by_Age_Group_20211018.csv")) %>% 
+mutate(year=year(diagnosis_date),
+       month=month(diagnosis_date, label = TRUE, abbr  = FALSE)) %>% 
+  filter(year=="2021")%>%
+  mutate(agegroup = if_else(agegroup == "10-19_","10-19", agegroup))
+
+Data2 <- read_csv(here::here("data/NCOV_COVID_Cases_by_LGA_Source_20211018 (1).csv")) %>% 
+  mutate(year=year(diagnosis_date),
+       month=month(diagnosis_date, label = TRUE),
+       day=day(diagnosis_date)) %>% 
+  filter(year=="2021")  %>% 
+  filter(month %in% c("May", "Jun", "Jul", "Aug", "Sep"))
+
+Data3 <- read_csv(here::here("data/National.csv")) %>% 
+  rename(date= "...1")
+library(stringr)
+Data4 <- Data3 %>%
+  mutate(Day=as.integer(str_extract(Data3$date, "[:digit:][:digit:]"))) 
+
+Data5 <- Data4 %>%
+  mutate(Month=as.numeric(str_sub(Data4$date,-2), label = TRUE)) %>% 
+  filter(Month %in% c("5", "6", "7", "8", "9")) 
+
+Data6 <- Data5 %>% 
+  rename(Avg_daily_cases =  `Avg. daily cases (line)`,
+         Avg_daily_test = `Avg. daily tests (bars)`)
+
+```
+
+---
+
+class: center, middle
+
+
+.content-box-soft[
+# Overview
+]
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+cases <- Data2 %>% 
+  select(Postcode, Localgovernmentarea) %>% 
+  rename(POSTCODE = Postcode) %>% 
+  group_by(Localgovernmentarea, POSTCODE) %>% na.omit() %>% 
+  summarise(count=n()) %>% 
+  arrange(desc(count))
+
+map2 <- read_sf(here::here("Order_4O3GD8/ll_gda94/esrishape/whole_of_dataset/victoria/VMADMIN/POSTCODE_POLYGON.shp"))  %>% 
+  mutate(POSTCODE = as.numeric(POSTCODE)) %>% 
+  select(POSTCODE, geometry) 
+
+join <- left_join(map2, cases, by = "POSTCODE") %>% 
+  mutate(POSTCODE=as.character(POSTCODE)) 
+
+join2 <- left_join(cases, map2, by = "POSTCODE") %>% 
+  mutate(POSTCODE=as.character(POSTCODE)) %>% head(17)
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+          
+join %>% ggplot(aes(text = paste('Count: ', count))) +
+  geom_sf(aes(fill = count),
+          colour="white") +
+  ggtitle("No. of cases in Postcode areas of Victoria")+
+  theme(axis.text.x = element_blank(),
+  axis.text.y = element_blank(),
+  axis.ticks = element_blank())
+
+```
+
+
+???
+
+The map shows the locations under which the postcode areas where the count of COVID-19 cases, falls. As we see, here that one postcode area under the  HUME(C) has total (sum of everyday cases from May'21-Sept'21) no. of cases above 2500.
+
+---
+
+class: center, middle
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+k <- ggplot(join2) +
+   geom_sf(aes(geometry = geometry, fill=count, colour=Localgovernmentarea)) +
+   coord_sf(xlim = c(144.45, 145.1), ylim = c(-38.0, -37.5)) +
+  ggtitle("No. of cases in Postcode areas under Local Govt.")+
+  theme(axis.text.x = element_blank(),
+  axis.text.y = element_blank(),
+  axis.ticks = element_blank())
+ggplotly(k)
+  
+```
+
+---
+
+class: center, middle
+
+.content-box-soft[
+### Daily trend of no. of cases in Local Govt. areas (LGA) for May'21-Aug'21.
+]
+
+```{r, map, echo = FALSE, message = FALSE, warning = FALSE}
+c18 <- c(
+ "#24716F", "#972F2D", "#4E7CD8", "#83607D", "#ED458C", "#EDA145", "#DAF7A6", "#125852", "#FF5733", "#581845", "#FA9EA1", "#E4CD8C", "#246AB4", "#9293C2", "#C29292", "#4D3434", "#706F6F", "#454B41"
+)
+```
+
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+nish <- Data2 %>% 
+  filter(month %in% c("May", "Jun", "Jul", "Aug")) %>% 
+  select(Localgovernmentarea, day, month) %>% 
+  group_by(Localgovernmentarea, day, month) %>% 
+  summarise(count=n()) %>% 
+   arrange(desc(count)) %>% 
+  head(100)
+
+l <- ggplot(nish, aes(x=day, y=count,  colour=Localgovernmentarea, size=count))+
+ geom_point()+
+  scale_colour_manual(values = c18)+
+  ggtitle("LGA with max cases:May-Aug'21")+
+  xlab("Day of the Month")+
+  ylab("No. of Cases")+
+  facet_wrap(~month, scales = "free_y")
+ggplotly(l)
+```
+
+???
+
+These plots represent the locations of government areas that have experienced maximum no. of COVID-19 cases from MAy'21-Aug'21.
+As we see from the plots here, May, June and July have experienced less cases overall, and at different locations every month. Hume(C) is the locations which is common is July and August. Also August is experiencing relatively high no. of cases when compared to the other plots in the figure.
+
+---
+
+.content-box-soft[
+### Daily trend of no. of cases in Local Govt. areas (LGA) for Sep'21.]
+
+```{r lot, echo = FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+nish2 <- Data2 %>% 
+  filter(month=="Sep") %>% 
+  select(Localgovernmentarea, day) %>% 
+  group_by(Localgovernmentarea, day) %>% 
+  summarise(count=n()) %>% 
+   arrange(desc(count)) %>% 
+  head(50)
+
+r <- ggplot(nish2, aes(x=day, y=count,  colour=Localgovernmentarea, size=count))+
+   geom_point()+
+  scale_colour_manual(values = c18)+
+  ggtitle("LGA with maximum cases in September")+
+  xlab("Day of the Month")+
+  ylab("No. of Cases")
+ggplotly(r)
+```
+
+???
+
+Here we that that, there is a sudden increase in the no. of cases in September i.e. above 300. The increase is seen in just one location throughout the month which is HUME(C). Therefore from July itself, this location experienced 5 cases in July and then kept on increasing , whereas the other locations did not experince an increase at this rate.
+
+
+---
+
+.content-box-soft[
+### Exploratory Anlysis: Covid cases from May to August by age group]
+
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE, fig.align="center"}
+
+data1.1 <- Data1 %>%
+  select(year, month, agegroup)%>%
+  group_by(month)%>%
+  count(agegroup)%>%
+   filter(month %in% c("May", "June", "July", "August"))%>%
+   rename("Number of Covid Cases" = n)%>%
+
+ggplot(aes(x= agegroup , y= `Number of Covid Cases`, group= month, fill= month)) + 
+  geom_area() +
+   theme_bw() +
+  facet_wrap(~month, scales = "free_y") + 
+  theme(legend.position="none", axis.text.x=element_text(angle= 90), axis.ticks.x = element_blank(), axis.ticks.y = element_blank()) + 
+  labs(title ="Covid Cases by Age Group" , y="Number of Covid Cases", x ="Age Group")
+
+data1.1 <- ggplotly()
+
+layout_ggplotly <- function(gg, x = -0.10, y = -0.05, x_legend=1.25, y_legend=0.95){
+  # The 1 and 2 goes into the list that contains the options for the x and y axis labels respectively
+  gg[['x']][['layout']][['annotations']][[1]][['y']] <- x
+  gg[['y']][['layout']][['annotations']][[2]][['x']] <- y
+  gg
+}
+data1.1 %>% layout_ggplotly()
+```
+
+???
+
+The above area plot shows the number of Covid cases in the months of May, June, July and August 2021 for each age group. The X axis depicts the age group and Y axis shows the count of cases. It can be seen from the plot that the number of cases in May, June, July were comparatively under control in comparison with August. Another observation which was made from the analysis is that age group 20-29 was the most affected age group thought out followed by 30-39.
+
+---
+
+.content-box-soft[
+### Exploratory Anlysis: Increase in Covid cases for the month of September by age group]
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.align="center"}
+
+data1.2 <- Data1 %>%
+  select(year, month, agegroup)%>%
+  group_by(month)%>%
+  count(agegroup)%>%
+   filter(month %in% "September")%>%
+  rename("Number of Covid Cases" = n)%>%
+  
+  ggplot(aes(x= agegroup , y= `Number of Covid Cases` , group= month, fill= month))+ 
+  geom_area() +
+   theme_bw() +
+  theme(legend.position="none", axis.text.x=element_text(angle= 90), axis.ticks.x = element_blank(), axis.ticks.y = element_blank())+ 
+  labs(title = "Covid Cases by Age Group in September" , y="Number of Covid Cases", x="Age Group")
+
+
+data1.2 <- ggplotly()
+
+layoutggplotly <- function(gg, x = -0.10, y = -0.05, x_legend=1.25, y_legend=0.95){
+  # The 1 and 2 goes into the list that contains the options for the x and y axis labels respectively
+  gg[['x']][['layout']][['annotations']][[1]][['x']] <- x
+  gg[['y']][['layout']][['annotations']][[2]][['x']] <- y
+  gg
+}
+data1.2  %>% layoutggplotly()
+
+
+```
+
+
+???
+
+The above area plot shows the number of Covid cases in September 2021 for each age group. The x axis depicts the age group and y axis shows the count of cases. There is drastic increase in the cases overall. The number of cases for the age group 20-29 increased from 265 in August to 3885 in September.
+
+Another interesting observation was made from both the graphs, the cases for the age group 0-19 were less in the initial months, where as they too aggravated suddenly in August and September. Which means Victoria had the maximum number of cases in September and even children were getting infected by the virus. 
+
+---
+
+.content-box-soft[
+### Exploratory Anlysis: Reasons for COVID-19 spread-out]
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.align="center"}
+     
+section2 <- Data2 %>% 
+   mutate(year = year(diagnosis_date),
+         month = month(diagnosis_date, label = TRUE),
+         day = day(diagnosis_date)) %>% 
+  select(month, acquired) %>% 
+  group_by(month, acquired) %>% 
+  summarise(Count=n()) 
+  
+
+#plot
+ggplot(section2, aes(x = month, 
+                     y = Count,
+                     fill = acquired)) + 
+  geom_col()+
+  facet_wrap(~acquired, ncol = 1, scales = "free")+
+theme_bw() +
+  ggtitle("Reasons for COVID-19 spread-out") +
+  theme(legend.position = "none") 
+
+
+```
+
+???
+
+The current evidence suggests that the virus spread mainly between people who got in close contact with the confirmed cases and the count of infected patients seems to be very high especially in the month of Sepetember with the total count of 9614 confirmed cases.
+---
+
+
+.content-box-soft[
+## CONCLUSION]
+
+```{r echo = FALSE, fig.align="center", warning=FALSE, message=FALSE}
+
+cases <- Data6 %>%
+  ggscatter(x = "Avg_daily_cases", y = "Avg_daily_test",
+          add = "reg.line", conf.int = TRUE,
+          cor.coef = TRUE, cor.method = "pearson",
+  xlab = "Average daily cases",
+  ylab = "Average daily tests")+
+  scale_y_continuous(labels = scales::comma) +
+  geom_smooth(method = "loess", color = "red", se = FALSE) +
+  geom_point(alpha = 0.4)+
+  facet_wrap(~Month, scales = "free")+
+  theme_bw()+
+  labs(title = "Correlation between average daily cases and test") 
+  
+cases
+```
+
+---
+
+
+class: left, top
+
+* The above facet graph shows a stochastic version of whether there is any impact of average daily cases on average daily test. Stochastic modeling presents data and predicts outcomes that account for certain levels of unpredictability or randomness. 
+
+* The correlation coefficient is a statistical measure of the strength of the relationship between the relative movements of two variables. The values range between **-1.0 and 1.0.** The R value for the month of September is + 0.98 which suggests a strong, positive association between two variables.
+
+* Hence from the above exploratory data analysis, it is evident that in Victoria the spread of Covid cases were under control from May- July'21 and started aggravating from August which lead to a sudden increase in September. 
+
+* The local government area, Hume(c) was most infected with the noval-Covid virus, The age group most affected during this period was 20-29 and the maximum number of people who got infected was by coming in close contact with the already confirmed positive cases.
+
+---
+
+
+class: center, middle
+
+.content-box-soft[
+## Thank You!]
+
+![](https://media2.giphy.com/media/ZrlYxeVZ0zqkU/giphy.gif)

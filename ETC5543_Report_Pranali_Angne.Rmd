@@ -1,0 +1,119 @@
+---
+title: "ETC5543 Report - The conjBayes R package development"
+author: "Pranali Angne, Student ID: 32355068"
+date: "`r Sys.Date()`"
+output: 
+  bookdown::html_document2:
+    toc: true
+    toc_float: true
+---
+
+<style>
+body{
+text-align: justify
+}
+</style>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Abstract
+
+The aim of this internship was to develop a whole new package named [conjBayes](https://github.com/catherineforbes/conjBayes)
+for the unit ETC4541/ETC5410, Bayesian inference and data analysis. The *conjBayes* packages provides functions for updating conjugate Bayesian prior distributions to the posterior distribution. All the functions have been specially formatted using the *roxygen* format above the source code for each function. Then these defined functions in this package have been added to the corresponding test files converting the existing unit tests cases to *testthat* format and increasing the code coverage of tests.  During the process of developing *conjBayes* package, a few R packages were applied, including *usethis*, *devtools*, *roxygen2*, *pkgdown*, and *testthat*. I'll be reviewing my work on the *conjBayes* package in this report. I discovered my weaknesses during the internship and got better at solving challenging issues when developing or upgrading R packages.
+
+
+# Background and motivation
+
+The *conjBayes* is an R package designed to help students (understand) and apply Conjugate Bayesian models. The project my supervisor had in mind involves creating a package of R programs that she has written to do Markov chain Monte Carlo algorithms to fit various Bayesian statistical models. In particular my supervisor was looking for a package that do 
+1. Beta/ Binomial (Beta/ Bernoulli)
+2. Gamma Exponential 
+3. Gamma/Poisson
+4. Normal/Normal 
+5. Normal Inverse Gamma
+For all these we needed the pdf, cdf quantile function and the ability to sample random draws. She also wanted to have a vignettes. Therefore, my job was to help my supervisor develop the *conjBayes* package and help her converting the format of documentation and unit tests, as well as creating the vignette.
+
+
+I believe that this internship gives me the chance to put my knowledge to use in a difficult, real-world setting. It might allow me to put my knowledge to use, identify my weaknesses, and enhance my capacity for handling challenging R-package issues.
+
+Furthermore, Conjugate Bayesian prior distributions can be updated to the posterior distribution using the functions provided by the *conjBayes* package, because it was designed to help students (understand) and apply Conjugate Bayesian models and, I  hope to help my supervisor to develop this package and provide it to more users. Overall, those are my motivations that joining the internship and working on developing the *conjBayes* package as this  my first time working for a internship which built a lot of confidence and this will definitely help me for my future. 
+
+# The development of the *conjBayes* package
+
+The name of this package is *conjBayes* which offers "Functions for updating conjugate priors for Bayesian analysis". Currently, the *conjBayes* is being developed to version 1.0.0. The author for this package is **Dr. Catherine Forbes** . The package **conjBayes** is an R package. The conjBayes packages provides functions for updating conjugate Bayesian prior distributions to the posterior distribution under GPL (>= 3) license. 
+
+I primarily assist my supervisor during the internship with increasing the number of unit tests, converting the original unit test cases format to the *testthat* format, and documenting functions using the *roxygen* format (or converting the original format to the *roxygen* format). I also assist with creating vignettes. While *conjBayes* is being developed, running the R-CMD-check, debugging, and submitting the modification to Github for reproducibility are also important and routine. Additionally, to build the package, the R-CMD-check, pkgdown, and test-coverage have all been posted to Github Actions.
+
+## Unit test format transformation
+
+To carry out unit testing. The *testthat* package was used and create new unit tests for each of the six tested functions as the functions were being created. 
+
+## Vignette of *conjBayes* package
+
+There is no vignette of *MSToolkit* in the older version. However, the author generated a [package website](http://mikeksmith.github.io/MSToolkit/) in the older version. Therefore, I created the [vignette](https://jluo0015.github.io/MSToolkit/articles/MSToolkit_intro_vig.html) by summarising and modifying the articles on the older website. The vignette is designed to help users understand how to use the package, as well as the main features of the package. Therefore, there are four sections and four subsections in the vignette that contain the explanation of the two most important functions in the *MSToolkit* package. A part of the vignette is shown in Figure \@ref(fig:vignette):
+
+```{r vignette, fig.cap="Vignette", fig.align='center'}
+knitr::include_graphics(here::here("pic/vignette.png"))
+```
+
+Except for one section simply introduces the package and one explains how to troubleshoot the code, the rest two sections have made up most of the whole vignette, which is used to explain the *generateData* function and *analyzeData* function. In the section illustrating the *generateData* function, there are nine examples shown to explain how to use this function to generate the suitable simulation data based on different applications of dose and other control variables. The Figure \@ref(fig:generate-data-example) below shows the application of the basic linear model into the *generateData* function:
+
+```{r generate-data-example, fig.cap="The Example of generateData Function", fig.align='center'}
+knitr::include_graphics(here::here("pic/generateData.jpg"))
+```
+
+Meanwhile, in the section introducing the *analyzeData* function, a complete process including the trial design, data generation and data analysis has been created to guide users to apply this function. Besides, this section also explains three important arguments to help users better use the *analyzeData* function to get the appropriate result. The application of the *analyzeData* function is shown in Figure \@ref(fig:analyze-data-example):
+
+```{r analyze-data-example, fig.cap="The Example of analyzeData Function", fig.align='center'}
+knitr::include_graphics(here::here("pic/analyzeData.jpg"))
+```
+
+## The Github website of the *MSToolkit* package
+
+Although a package website already existed. Based on the requirement of developing the *MSToolkit* package, a new Github website is needed to be recreated by the *pkgdown* package. Therefore, I generated the new [Github website](https://jluo0015.github.io/MSToolkit/) based on the contents from the old one but with some modifications. 
+
+The website contains five parts. The first one is the [home page](https://jluo0015.github.io/MSToolkit/) which is used to display the basic information of *MSToolkit*, like the installation, usage and how to run the analysis under an external environment. A part of the home page is shown in Figure \@ref(fig:home-page): 
+
+```{r home-page, fig.cap="Home Page", fig.align='center'}
+knitr::include_graphics(here::here("pic/home_page.jpg"))
+```
+
+The second part is [Get Started](https://jluo0015.github.io/MSToolkit/articles/MSToolkit_intro_vig.html) which contains the vignette of *MSToolkit* and explains to users how to use the main functions of the package. A part of the Get started is shown in Figure \@ref(fig:get-started): 
+
+```{r get-started, fig.cap="Get Started", fig.align='center'}
+knitr::include_graphics(here::here("pic/get_started.jpg"))
+```
+
+The third part is the [Reference](https://jluo0015.github.io/MSToolkit/reference/index.html) which is used to display all the functions of the *MSToolkit* package. A part of the Reference is shown in Figure \@ref(fig:reference): 
+
+```{r reference, fig.cap="Reference", fig.align='center'}
+knitr::include_graphics(here::here("pic/reference.png"))
+```
+
+The fourth part is the Articles. In the Articles part, there are two subsections. The first subsection contains two articles which are [generateData](https://jluo0015.github.io/MSToolkit/articles/generate_data.html) and [analyzeData](https://jluo0015.github.io/MSToolkit/articles/analyze_data.html). They all provide further detail about these two important functions. Another subsection is background reading, which contains two articles. The [Simulation Overview](https://jluo0015.github.io/MSToolkit/articles/simulation_overview.html) explains the clinical trial simulation which is the core concept of simulation in the *MSToolkit* package. Another one is [References](https://jluo0015.github.io/MSToolkit/articles/references.html) which contains the references list for creating this package. 
+
+The last part is the [Changelog](https://jluo0015.github.io/MSToolkit/news/index.html). It shows the development status of the *MSToolkit* package from version 1.0.0 to version 3.0.0. A part of the Changelog is shown in Figure \@ref(fig:change-log):
+
+```{r change-log, fig.cap="Changelog", fig.align='center'}
+knitr::include_graphics(here::here("pic/changelog.jpg"))
+```
+
+# Conclusion
+
+In conclusion, updating a package is a complicated job, especially when we need to modernise the package and convert the original format. However, this is also a good opportunity for us to apply our learning and practice our knowledge, as well as learn some new knowledge. Besides, we also need to be patient in the process of debugging because it is always difficult. 
+
+Because my supervisor does not accept my pull requests yet, all my jobs are still in the Dev branch of my repository. Besides, I have discussed with my supervisor. He agreed that I can keep working on this project even though I finish the internship. Therefore, I will keep working on improving this package after that and hope to republish it on CRAN again. Overall, this is a good opportunity for me and I think it could help my future career.  
+
+# References
+
+Yihui Xie (2021). knitr: A General-Purpose Package for Dynamic Report Generation in R. R package version 1.37.
+
+Yihui Xie (2015) Dynamic Documents with R and knitr. 2nd edition. Chapman and Hall/CRC. ISBN 978-1498716963
+
+Yihui Xie (2014) knitr: A Comprehensive Tool for Reproducible Research in R. In Victoria Stodden, Friedrich Leisch and Roger D. Peng, editors, Implementing
+  Reproducible Computational Research. Chapman and Hall/CRC. ISBN 978-1466561595
+
+Kirill Müller (2020). here: A Simpler Way to Find Your Files. R package version 1.0.1. https://CRAN.R-project.org/package=here

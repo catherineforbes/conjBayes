@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "catherine.forbes@monash.edu",
            comment = c(ORCID = "0000-0003-3830-5865"))
-Description: The package **conjBayes** is an R package 
+Description: The package **conjBayes** is an R package. The conjBayes packages provides functions for updating conjugate Bayesian prior distributions to the posterior distribution.  
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
