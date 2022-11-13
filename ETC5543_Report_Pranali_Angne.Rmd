@@ -86,7 +86,7 @@ For the Gamma prior for Poisson data model we considered the dataset `discoverie
 Next section was about Beta prior for Bernoulli data model. Meanwhile, in the section introducing the *BetaBernoulli* function, a complete process including the trial design, data generation and data analysis has been created to guide users to apply this function. Besides, this section also explains three important arguments to help users better use the  function to get the appropriate result. The application of the *BetaBernoulli* function is shown in Figure \@ref(fig:analyze-data-example):
 
 ```{r BetaBernoulli-example, fig.cap="The Example of BetaBernoulli Function", fig.align='center'}
-knitr::include_graphics(here::here("pic/BetaBernoulli.jpg"))
+knitr::include_graphics(here::here("pic/BetaBernoulli.png"))
 ```
 
 4. And the last is providing an example of the Zombie Apocalypsein:
@@ -95,7 +95,7 @@ A final (and fun!) example is described in the **RPub** "Fundamentals of Bayesia
 
 Below we use the code provided in the RPub to generate 13 vaccine outcomes, where a success corresponds to a cure.
 
-```{r Zombie-Apocalypseini-example, fig.cap="The Example of Zombie Apocalypsein", fig.align='center'}
+```{r Zombie-Apocalypseini-example1, fig.cap=" Zombie Apocalypsein Example", fig.align='center'}
 knitr::include_graphics(here::here("pic/zombie.png"))
 ```
 
@@ -105,7 +105,7 @@ knitr::include_graphics(here::here("pic/zombie.png"))
 
 Since we have 3 successes out of 13 independent trials, we can use the **BetaBinomial** function from the **conjBayes** package. This time let's assume our prior is Beta(shape1 = 3, shape2 = 97), which corresponds to assuming the expected probability of success (that the zombie outbreak vaccine will work on any individual) is 0.03 and (before we see any data...) $\Pr(p \leq$ `r qbeta(p = 0.99, shape1 = 3, shape2 = 97)` $)=0.99$. Then we have
 
-```{r Zombie-Apocalypseini-example, fig.cap="The Example of Zombie Apocalypsein", fig.align='center'}
+```{r , fig.cap="Zombie example", fig.align='center'}
 knitr::include_graphics(here::here("pic/zombie2.png"))
 ```
 
