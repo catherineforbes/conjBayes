@@ -44,6 +44,8 @@ qgamma(p = 0.99, shape = 1, rate = 0.1)
 ```
 A plot of this Gamma(shape = 1, rate = 0.2) prior distribution is shown below:
 ```{r fig.cap="Gamma(shape = 1, rate = 0.2) prior density function for Poisson model."}
+# Before we use the GammaPoisson function we need to library 'conjBayes' package.
+
 library(tidyverse)
 library(conjBayes)
 

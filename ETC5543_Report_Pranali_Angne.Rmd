@@ -49,71 +49,75 @@ I primarily assist my supervisor during the internship with increasing the numbe
 
 ## Unit test format transformation
 
-To carry out unit testing. The *testthat* package was used and create new unit tests for each of the six tested functions as the functions were being created. 
+To carry out unit testing. The *testthat* package was used and create new unit tests for each of the six tested functions as the functions were being created. All the functions have been tested and they work perfectly fine. 
 
 ## Vignette of *conjBayes* package
 
-There is no vignette of *MSToolkit* in the older version. However, the author generated a [package website](http://mikeksmith.github.io/MSToolkit/) in the older version. Therefore, I created the [vignette](https://jluo0015.github.io/MSToolkit/articles/MSToolkit_intro_vig.html) by summarising and modifying the articles on the older website. The vignette is designed to help users understand how to use the package, as well as the main features of the package. Therefore, there are four sections and four subsections in the vignette that contain the explanation of the two most important functions in the *MSToolkit* package. A part of the vignette is shown in Figure \@ref(fig:vignette):
+There is a vignette of *conjBayes* in the version 1.0.0. My supervisor generated the function, therefore, I helped her to cretate a vignette/ directory, adding necessary dependencies to the description file and drafting the vignette. [vignettes](https://github.com/catherineforbes/conjBayes/tree/main/vignettes).
+
+The vignette is made to make it easier for users to comprehend both how to use the package and its key features. Therefore, there are four sections the vignette that contain the explanation of the two most important functions in the *conjBayes* package:
+1. Introduction
+2. Gamma prior for Poisson data model
+3. Beta prior for Bernoulli data model
+4. and an example of Zombie Apocalypsein  
+
+
+1. Introduction
+The initial section is the introductory section which explains The conjBayes packages provides functions for updating conjugate Bayesian prior distributions. 
+
+When data are modelled conditional on an unknown parameter, say $\theta$, the marginal distribution assumed for $\theta$ is known as the **prior** distribution and the **posterior** distribution is the conditional distribution for $\theta$ given the observed data. This posterior distribution is determined by Bayes theorem. When the posterior distribution can be calculated in closed form, and belongs to the same distributional family as the prior distribution, then the prior is called a **conjugate prior** for the given data model. 
+
+Each conjBayes function reports the hyperparameters of the relevant prior distribution corresponding to the prior and model combination as indicated by the function name. Let's look at an example to see how the functions work.
+
+
+2. Gamma prior for Poisson data model:
+
+A part of the vignette is shown in Figure \@ref(fig:vignette):
 
 ```{r vignette, fig.cap="Vignette", fig.align='center'}
 knitr::include_graphics(here::here("pic/vignette.png"))
 ```
 
-Except for one section simply introduces the package and one explains how to troubleshoot the code, the rest two sections have made up most of the whole vignette, which is used to explain the *generateData* function and *analyzeData* function. In the section illustrating the *generateData* function, there are nine examples shown to explain how to use this function to generate the suitable simulation data based on different applications of dose and other control variables. The Figure \@ref(fig:generate-data-example) below shows the application of the basic linear model into the *generateData* function:
+For the Gamma prior for Poisson data model we considered the dataset `discoveries`, which contains the number of "great" inventions and scientific discoveries in each year of the 100 year period 1860 to 1959. And after updating the hyper parameters prior probabilities can be confirmed. We use the **GammaPoisson** function to update the Gamma distribution hyperparameters, given the data values in `discoveries`.
 
-```{r generate-data-example, fig.cap="The Example of generateData Function", fig.align='center'}
-knitr::include_graphics(here::here("pic/generateData.jpg"))
+
+3. Beta prior for Bernoulli data model:
+
+Next section was about Beta prior for Bernoulli data model. Meanwhile, in the section introducing the *BetaBernoulli* function, a complete process including the trial design, data generation and data analysis has been created to guide users to apply this function. Besides, this section also explains three important arguments to help users better use the  function to get the appropriate result. The application of the *BetaBernoulli* function is shown in Figure \@ref(fig:analyze-data-example):
+
+```{r BetaBernoulli-example, fig.cap="The Example of BetaBernoulli Function", fig.align='center'}
+knitr::include_graphics(here::here("pic/BetaBernoulli.jpg"))
 ```
 
-Meanwhile, in the section introducing the *analyzeData* function, a complete process including the trial design, data generation and data analysis has been created to guide users to apply this function. Besides, this section also explains three important arguments to help users better use the *analyzeData* function to get the appropriate result. The application of the *analyzeData* function is shown in Figure \@ref(fig:analyze-data-example):
+4. And the last is providing an example of the Zombie Apocalypsein:
 
-```{r analyze-data-example, fig.cap="The Example of analyzeData Function", fig.align='center'}
-knitr::include_graphics(here::here("pic/analyzeData.jpg"))
+A final (and fun!) example is described in the **RPub** "Fundamentals of Bayesian Data Analysis in [RPubs] (https://rpubs.com/klinares/443186). We want to know the probability we have found a vaccine to cure a zombie outbreak. 
+
+Below we use the code provided in the RPub to generate 13 vaccine outcomes, where a success corresponds to a cure.
+
+```{r Zombie-Apocalypseini-example, fig.cap="The Example of Zombie Apocalypsein", fig.align='center'}
+knitr::include_graphics(here::here("pic/zombie.png"))
 ```
 
-## The Github website of the *MSToolkit* package
-
-Although a package website already existed. Based on the requirement of developing the *MSToolkit* package, a new Github website is needed to be recreated by the *pkgdown* package. Therefore, I generated the new [Github website](https://jluo0015.github.io/MSToolkit/) based on the contents from the old one but with some modifications. 
-
-The website contains five parts. The first one is the [home page](https://jluo0015.github.io/MSToolkit/) which is used to display the basic information of *MSToolkit*, like the installation, usage and how to run the analysis under an external environment. A part of the home page is shown in Figure \@ref(fig:home-page): 
-
-```{r home-page, fig.cap="Home Page", fig.align='center'}
-knitr::include_graphics(here::here("pic/home_page.jpg"))
+```{r Zombie-Apocalypseini-example, fig.cap="The Example of Zombie Apocalypsein", fig.align='center'}
+knitr::include_graphics(here::here("pic/zombie.png"))
 ```
 
-The second part is [Get Started](https://jluo0015.github.io/MSToolkit/articles/MSToolkit_intro_vig.html) which contains the vignette of *MSToolkit* and explains to users how to use the main functions of the package. A part of the Get started is shown in Figure \@ref(fig:get-started): 
+Since we have 3 successes out of 13 independent trials, we can use the **BetaBinomial** function from the **conjBayes** package. This time let's assume our prior is Beta(shape1 = 3, shape2 = 97), which corresponds to assuming the expected probability of success (that the zombie outbreak vaccine will work on any individual) is 0.03 and (before we see any data...) $\Pr(p \leq$ `r qbeta(p = 0.99, shape1 = 3, shape2 = 97)` $)=0.99$. Then we have
 
-```{r get-started, fig.cap="Get Started", fig.align='center'}
-knitr::include_graphics(here::here("pic/get_started.jpg"))
+```{r Zombie-Apocalypseini-example, fig.cap="The Example of Zombie Apocalypsein", fig.align='center'}
+knitr::include_graphics(here::here("pic/zombie2.png"))
 ```
 
-The third part is the [Reference](https://jluo0015.github.io/MSToolkit/reference/index.html) which is used to display all the functions of the *MSToolkit* package. A part of the Reference is shown in Figure \@ref(fig:reference): 
-
-```{r reference, fig.cap="Reference", fig.align='center'}
-knitr::include_graphics(here::here("pic/reference.png"))
-```
-
-The fourth part is the Articles. In the Articles part, there are two subsections. The first subsection contains two articles which are [generateData](https://jluo0015.github.io/MSToolkit/articles/generate_data.html) and [analyzeData](https://jluo0015.github.io/MSToolkit/articles/analyze_data.html). They all provide further detail about these two important functions. Another subsection is background reading, which contains two articles. The [Simulation Overview](https://jluo0015.github.io/MSToolkit/articles/simulation_overview.html) explains the clinical trial simulation which is the core concept of simulation in the *MSToolkit* package. Another one is [References](https://jluo0015.github.io/MSToolkit/articles/references.html) which contains the references list for creating this package. 
-
-The last part is the [Changelog](https://jluo0015.github.io/MSToolkit/news/index.html). It shows the development status of the *MSToolkit* package from version 1.0.0 to version 3.0.0. A part of the Changelog is shown in Figure \@ref(fig:change-log):
-
-```{r change-log, fig.cap="Changelog", fig.align='center'}
-knitr::include_graphics(here::here("pic/changelog.jpg"))
-```
 
 # Conclusion
 
-In conclusion, updating a package is a complicated job, especially when we need to modernise the package and convert the original format. However, this is also a good opportunity for us to apply our learning and practice our knowledge, as well as learn some new knowledge. Besides, we also need to be patient in the process of debugging because it is always difficult. 
+In conclusion, updating a package is a complicated job, especially when we need to develop it from scratch. However, this is also a good opportunity for me to apply my learning and practice my knowledge, as well as learn some new knowledge. Besides, resolving the errors and the debugging process was quite interesting to learn. I will say I could learn the most out of the internship and extremely thankful towards my supervisor who is so much patient with abundance of knowledge  and provided me with first hand experience through her work. 
 
-Because my supervisor does not accept my pull requests yet, all my jobs are still in the Dev branch of my repository. Besides, I have discussed with my supervisor. He agreed that I can keep working on this project even though I finish the internship. Therefore, I will keep working on improving this package after that and hope to republish it on CRAN again. Overall, this is a good opportunity for me and I think it could help my future career.  
+Overall, this is a good opportunity for me and I think it could help my future career. Lastly I would like to thank Monash Universty especially prof. Di Cook and Prof. Rob Hyndman who gave me an opportunity by providing me this internship.  
 
 # References
 
-Yihui Xie (2021). knitr: A General-Purpose Package for Dynamic Report Generation in R. R package version 1.37.
+https://rpubs.com/klinares/443186
 
-Yihui Xie (2015) Dynamic Documents with R and knitr. 2nd edition. Chapman and Hall/CRC. ISBN 978-1498716963
-
-Yihui Xie (2014) knitr: A Comprehensive Tool for Reproducible Research in R. In Victoria Stodden, Friedrich Leisch and Roger D. Peng, editors, Implementing
-  Reproducible Computational Research. Chapman and Hall/CRC. ISBN 978-1466561595
-
-Kirill Müller (2020). here: A Simpler Way to Find Your Files. R package version 1.0.1. https://CRAN.R-project.org/package=here
+https://r-pkgs.org
