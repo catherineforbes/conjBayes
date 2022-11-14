@@ -2,11 +2,14 @@ Package: conjBayes
 Title: The R Package Offers "Functions for updating conjugate priors for Bayesian analysis".
 Version: 1.0.0
 Authors@R: 
-    person(given = "Catherine",
+  c(person(given = "Catherine",
            family = "Forbes",
            role = c("aut", "cre"),
            email = "catherine.forbes@monash.edu",
-           comment = c(ORCID = "0000-0003-3830-5865"))
+           comment = c(ORCID = "0000-0003-3830-5865")),
+    person(given = "Pranali",
+           family = "Angne",
+           role = "ctb"))
 Description: The package **conjBayes** is an R package. The conjBayes packages provides functions for updating conjugate Bayesian prior distributions to the posterior distribution.  
 License: GPL (>= 3)
 Encoding: UTF-8
