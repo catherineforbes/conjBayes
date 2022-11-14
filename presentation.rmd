@@ -47,7 +47,7 @@ class: left, top
 
 4. Normal/Normal
 
-5. Normal Inverse Gamma
+5. Normal Inverse Gamma/ Normal
 
 
 ---
@@ -74,6 +74,9 @@ background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6
 
 + All the functions have been tested and they work perfectly fine. 
 
+```{r out.width = '105%', echo = FALSE, fig.align="center"}
+knitr::include_graphics(here::here("pic/test.png"))
+```
 
 ---
 background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
@@ -86,7 +89,7 @@ background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6
 1. Introduction
 2. Gamma prior for Poisson data model
 3. Beta prior for Bernoulli data model
-4. and an example of Zombie Apocalypsein]
+4. and an example of Zombie Apocalypse]
 
 **Introduction:**
 
@@ -99,83 +102,38 @@ background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6
 
 ## Gamma prior for Poisson data model
 
-Consider the dataset `discoveries`, which contains the number of "great" inventions and scientific discoveries in each year of the 100 year period 1860 to 1959. 
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-discoveries
+```{r out.width = '95%', echo = FALSE, fig.align="center"}
+knitr::include_graphics(here::here("pic/gamma.png"))
+```
 
-options(digits = 3)
++ **The GammaPoisson function will calculate the updated values 𝑎1 and 𝑏1 for us.**
 
++ We use the **GammaPoisson** function to update the Gamma distribution hyperparameters, given the data values in `discoveries`.
+
+---
+
+
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
+
++ What values of $a_0$ an $b_0$ could we use for the `discoveries` data? It is a matter of person choice. 
+
++ If we choose $a_0=1$ and $b_0=0.1$, then we are assuming
+$\Pr(\lambda \leq 10) =$ `r pgamma(q=10, shape=1, rate=0.1)` and $\Pr( \lambda \leq$ `r qgamma(p = 0.99, shape = 1, rate = 0.1)` $)=0.99$, reflecting a large degree of uncertainty in $\lambda$. These prior probabilities can be confirmed:
+
+```{r}
 pgamma(q = 10, shape = 1, rate = 0.1)
 qgamma(p = 0.99, shape = 1, rate = 0.1)
 ```
-
----
-
-
-background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
-
-**A plot of this Gamma(shape = 1, rate = 0.2) prior distribution is shown below:**
-
-.pull-left[
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-library(tidyverse)
-library(conjBayes)
-
-lambda <- seq(0.01, 25, 0.01)
-densprior <- dgamma(x = lambda, shape = 1, rate = 0.2)
-pt <- tibble(lambda, densprior)
-
-p1 <- pt %>% ggplot(aes(x = lambda, y = densprior)) +
-  geom_line(color = "blue") +
-  geom_vline(xintercept = 0) +
-  geom_hline(yintercept = 0) +
-  xlab(expression(lambda)) +
-  ylab(expression(paste("density of ",lambda))) +
-  geom_area(fill = "blue", alpha=0.3)
-p1  
-```
-]
-
-.pull-right[
-We use the **GammaPoisson** function to update the Gamma distribution hyperparameters, given the data values in `discoveries`.
-]
 ---
 
 background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
 
-# And the updated hyperparameters are computed as follows:
+# Updated hyperparameter
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE, eval=FALSE}
-posterior <- GammaPoisson(y=dt$y, a0 = 1, b0 = 0.2)
-posterior$a1
-posterior$b1
+```{r out.width = '60%', echo = FALSE, fig.align="center"}
+knitr::include_graphics(here::here("pic/hyper.png"))
 ```
- 
-Having updated the prior using the data, we are more certain about the ('true' population average) number of discoveries each year, with $\Pr(2.78 \leq \lambda \leq 3.475) =0.95.$ To confirm: 
-```{r, echo = FALSE, message = FALSE, warning = FALSE, eval=FALSE}
-pgamma(q = 3.475, shape = posterior$a1, rate = posterior$b1) - pgamma(q = 2.78, shape = posterior$a1, rate = posterior$b1)
-```
-We can plot the prior and posterior densities together with the location of the maximum likelihood estimator (which is the sample average for the Poisson model) and see how our probabilities were updated:
-
-```{r , echo = FALSE, message = FALSE, warning = FALSE, eval=FALSE}
-pt <- pt %>% mutate(denspost = dgamma(lambda, shape = posterior$a1, rate = posterior$b1))
-
-p1 + geom_line(data = pt, aes(x = lambda, y = denspost), color="magenta") +
-  geom_area(data = pt, aes(x = lambda, y = denspost),fill = "magenta", alpha=0.3) +
-  annotate("text", label="prior = Gamma(shape = 1, rate = 0.2)", x=11, y=0.2, color="blue") +
-  annotate("text", label="posterior = Gamma(shape = 311, rate = 100.2)", x=10.5, y=1.5, color="magenta") +
-    geom_vline(xintercept = mean(discoveries)) +
-  annotate("text", label="MLE (sample mean): 3.1", x=7, y=0.7) + 
-  xlim(c(0,20))
-
-  
-```
-
---
-
-???
-
 
 ---
 background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
@@ -183,64 +141,13 @@ background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6
 class: left, top
 # Beta prior for Bernoulli data model
 
-Let's consider another example, this time with n binary outcomes, each independent with probability of "success' p. That is, assume the outcomes are independent and identically distributed **Bernoulli**(p) random variables. 
++ Let's consider another example, this time with n binary outcomes, each independent with probability of "success' p. 
 
-The Beta(shape1, shape2) is the conjugate prior for this model. If we take as the prior hyperparameters shape1 = $a_0$ and shape2 = $b_0$, then the posterior distribution will also be a Beta distributiond, and we can use the **BetaBinomial** function to get the values of the updated hyperparameters.
++ That is, assume the outcomes are independent and identically distributed **Bernoulli**(p) random variables. 
 
++ The Beta(shape1, shape2) is the conjugate prior for this model. 
 
----
-background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
-
-class: left, top
-
-Let's simulate n=10 binary outcomes from a Bernoulli(p=0.2) distribution, and suppose our prior distribution is Beta(shape=1, rate=1), which corresponds to a uniform density over the interval (0, 1). We have:
-
-```{r}
-set.seed(12345)
-y <- rbinom(n=10, size=1, prob=0.2)
-y
-
-posterior <- BetaBernoulli(y = y, a0 = 1, b0 = 1)
-posterior
-```
----
-
-background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
-
-class: left, top
-
-```{r eval=FALSE, echo=FALSE}
-set.seed(12345)
-y <- rbernoulli(n = 10, p=0.2)
-posterior <- BetaBernoulli(y = y, a0 = 1, b0 = 1)
-y
-posterior
-```
-
-A plot of the prior and posterior densities are shown below.
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-pp <- seq(0.001, 0.999, 0.01)
-densprior <- dbeta(x = pp, shape1 = 1, shape2 = 1)
-denspost <- dbeta(x = pp, shape1 = posterior$a1, shape2 = posterior$b1)
-pt2 <- tibble(pp, densprior, denspost)
-
-p2 <- pt2 %>% ggplot(aes(x = pp, y = densprior)) +
-  geom_line(color = "blue") +
-  geom_vline(xintercept = 0) +
-  geom_hline(yintercept = 0) +
-  xlab("p") +
-  ylab("density of p") +
-  geom_area(fill = "blue", alpha=0.3)
-
-p2 + geom_line(data = pt2, aes(x = pp, y = denspost), color="magenta") +
-  geom_area(data = pt2, aes(x = pp, y = denspost),fill = "magenta", alpha=0.3) +
-  annotate("text", label="prior = Beta(shape1 = 1, shape2 = 1)", x=0.8, y=1.2, color="blue") +
-  annotate("text", label="posterior = Beta(shape = 4, rate = 8)", x=0.65, y=2.5, color="magenta") +
-  geom_vline(xintercept = mean(y)) +
-  annotate("text", label="MLE (sample proportion of successes): 0.3", x=0.6, y=0.2)
-```
-
++ If we take as the prior hyperparameters shape1 = $a_0$ and shape2 = $b_0$, then the posterior distribution will also be a Beta distributiond, and we can use the **BetaBinomial** function to get the values of the updated hyperparameters.
 ---
 background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
 
@@ -248,9 +155,9 @@ class: left, top
 
 # Example 3: Zombie Apocalypse
 
-A final (and fun!) example is described in the **RPub** "Fundamentals of Bayesian Data Analysis in R", available at https://rpubs.com/klinares/443186. We want to know the probability we have found a vaccine to cure a zombie outbreak. 
++ A final (and fun!) example is described in the **RPub** "Fundamentals of Bayesian Data Analysis in R", available at https://rpubs.com/klinares/443186. We want to know the probability we have found a vaccine to cure a zombie outbreak. 
 
-Below we use the code provided in the RPub to generate 13 vaccine outcomes, where a success corresponds to a cure.
++ Below we use the code provided in the RPub to generate 13 vaccine outcomes, where a success corresponds to a cure.
 
 ```{r , echo = FALSE, message = FALSE, warning = FALSE}
 set.seed(789)
@@ -275,43 +182,20 @@ background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6
 
 class: left, top
 
-.pull-left[
+
 
 + Since we have 3 successes out of 13 independent trials, we can use the **BetaBinomial** function from the **conjBayes** package. 
 
-+ This time let's assume our prior is Beta(shape1 = 3, shape2 = 97), which corresponds to assuming the expected probability of success (that the zombie outbreak vaccine will work on any individual) is 0.03 and (before we see any data...) $\Pr(p \leq$ `r qbeta(p = 0.99, shape1 = 3, shape2 = 97)` $)=0.99$. Then we have]
++ This time let's assume our prior is Beta(shape1 = 3, shape2 = 97), which corresponds to assuming the expected probability of success (that the zombie outbreak vaccine will work on any individual) is 0.03 and (before we see any data...) $\Pr(p \leq$ `r qbeta(p = 0.99, shape1 = 3, shape2 = 97)` $)=0.99$. Then we have
+---
 
-.pull-right[
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
 
-```{r , echo = FALSE, message = FALSE, warning = FALSE}
-#pp <- seq(0.001, 0.999, 0.01)
-densprior <- dbeta(x = pp, shape1 = 3, shape2 = 97)
-posterior <- BetaBinomial(y=mean(data), a0=3, b0=97)
-posterior
+class: center, middle
 
-denspost <- dbeta(x = pp, shape1 = posterior$a1, shape2 = posterior$b1)
-pt3 <- tibble(pp, densprior, denspost)
-
-p3 <- pt3 %>% ggplot(aes(x = pp, y = densprior)) +
-  geom_line(color = "blue") +
-  geom_vline(xintercept = 0) +
-  geom_hline(yintercept = 0) +
-  xlab("p") +
-  ylab("density of p") +
-  geom_area(fill = "blue", alpha=0.3)
-
-p3 + geom_line(data = pt2, aes(x = pp, y = denspost), color="magenta") +
-  geom_area(data = pt2, aes(x = pp, y = denspost),fill = "magenta", alpha=0.3) +
-  annotate("text", label="prior = Beta(shape1 = 1, shape2 = 1)", x=0.3, y=25, color="blue") +
-  annotate("text", label="posterior = Beta(shape = 4, rate = 8)", x=0.71, y=3, color="magenta") +
-  geom_vline(xintercept = mean(y)) +
-  annotate("text", label="MLE (sample proportion of successes): 0.3", x=0.6, y=10)
-  
-
+```{r out.width = '75%', echo = FALSE, fig.align="center"}
+knitr::include_graphics(here::here("pic/appo.png"))
 ```
-]
-
-
 ---
 background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
 
@@ -320,3 +204,4 @@ class: center, middle
 # Thank You!
 
 ![](https://media2.giphy.com/media/ZrlYxeVZ0zqkU/giphy.gif)
+---
