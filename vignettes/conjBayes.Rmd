@@ -12,7 +12,7 @@ vignette: >
 ```{r, include = FALSE, }
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>", fig.width = 6, fig.height=3, message = FALSE, error = FALSE, comment = FALSE, warning = FALSE)
+  comment = "#>", fig.width = 7, fig.height=3, message = FALSE, error = FALSE, comment = FALSE, warning = FALSE)
 ```
 
 ## Introduction
@@ -87,14 +87,14 @@ posterior <- GammaPoisson(y=dt$y, a0 = 1, b0 = 0.2)
 posterior$a1
 posterior$b1
 ```
-Having updated the prior using the data, we are more certain about the ('true' population average) number of discoveries each year, with $\Pr(2.78 \leq \lambda \leq 3.475) =0.95.$ To confirm: 
+Having updated the prior using the data, we are more certain about the ('true' population average) number of discoveries each year, with posterior probability $\Pr(2.78 \leq \lambda \leq 3.475 \mid \mbox{discoveries}) =0.95.$ To confirm: 
 ```{r}
 pgamma(q = 3.475, shape = posterior$a1, rate = posterior$b1) - pgamma(q = 2.78, shape = posterior$a1, rate = posterior$b1)
 ```
 We can plot the prior and posterior densities together with the location of the maximum likelihood estimator (which is the sample average for the Poisson model) and see how our probabilities were updated:
 
 ```{r fig.cap="Gamma(shape = 311, rate = 100.2) posterior density, with Gamma(shape = 1, rate = 0.2) prior density function, for Poisson model for discoveries data."}
-pt <- pt %>% mutate(denspost = dgamma(lambda, shape = posterior$a1, rate = posterior$b1))
+pt <- pt %>% mutate(denspost = dgamma(lambda, shape = posterior$a1, rate = posterior$b1)) 
 
 p1 + geom_line(data = pt, aes(x = lambda, y = denspost), color="magenta") +
   geom_area(data = pt, aes(x = lambda, y = denspost),fill = "magenta", alpha=0.3) +
