@@ -34,7 +34,7 @@ The *conjBayes* is an R package designed to help students (understand) and apply
 3. Gamma/Poisson
 4. Normal/Normal 
 5. Normal Inverse Gamma/ Normal
-For all these we needed the pdf, cdf quantile function and the ability to sample random draws. She also wanted to have a vignettes. Therefore, my job was to help my supervisor develop the *conjBayes* package and help her converting the format of documentation and unit tests, as well as creating the vignette.
+She also wanted to have a vignettes. Therefore, my job was to help my supervisor develop the *conjBayes* package and help her converting the format of documentation and unit tests, as well as creating the vignette.
 
 
 I believe that this internship gives me the chance to put my knowledge to use in a difficult, real-world setting. It might allow me to put my knowledge to use, identify my weaknesses, and enhance my capacity for handling challenging R-package issues.
@@ -53,7 +53,7 @@ To carry out unit testing. The *testthat* package was used and create new unit t
 
 ## Vignette of *conjBayes* package
 
-There is a vignette of *conjBayes* in the version 1.0.0. My supervisor generated the function, therefore, I helped her to cretate a vignette/ directory, adding necessary dependencies to the description file and drafting the vignette. [vignettes](https://github.com/catherineforbes/conjBayes/tree/main/vignettes).
+There is a vignette of *conjBayes* in the version 1.0.0. My supervisor generated the function, therefore, I helped her to create a vignette/ directory, adding necessary dependencies to the description file and drafting the vignette. [vignettes](https://github.com/catherineforbes/conjBayes/tree/main/vignettes).
 
 The vignette is made to make it easier for users to comprehend both how to use the package and its key features. Therefore, there are four sections the vignette that contain the explanation of the two most important functions in the *conjBayes* package:
 1. Introduction
@@ -89,7 +89,7 @@ Next section was about Beta prior for Bernoulli data model. Meanwhile, in the se
 knitr::include_graphics(here::here("pic/BetaBernoulli.png"))
 ```
 
-4. And the last is providing an example of the Zombie Apocalypsein:
+4. And the last is providing an example of the Zombie Apocalypse:
 
 A final (and fun!) example is described in the **RPub** "Fundamentals of Bayesian Data Analysis in [RPubs] (https://rpubs.com/klinares/443186). We want to know the probability we have found a vaccine to cure a zombie outbreak. 
 
@@ -112,9 +112,9 @@ knitr::include_graphics(here::here("pic/zombie2.png"))
 
 # Conclusion
 
-In conclusion, building a package is a complicated job, especially when we need to develop it from scratch. However, this is also a good opportunity for me to apply my learning and practice my knowledge, as well as learn some new knowledge. Besides, resolving the errors and the debugging process was quite interesting to learn. I will say I could learn the most out of the internship and extremely thankful towards my supervisor who is so much patient with abundance of knowledge  and provided me with first hand experience through her work. 
+In conclusion, writing a package is a complicated job, especially when we need to develop it from scratch. However, this is also a good opportunity for me to apply my learning and practice my knowledge, as well as learn some new knowledge. Besides, resolving the errors and the debugging process was quite interesting to learn. I will say I could learn the most out of the internship and extremely thankful towards my supervisor who is so much patient with abundance of knowledge  and provided me with first hand experience through her work. 
 
-Overall, this is a good opportunity for me and I think it could help my future career. Lastly I would like to thank Monash Universty especially prof. Di Cook and Prof. Rob Hyndman who gave me an opportunity by providing me this internship.  
+Overall, this is a good opportunity for me and I think it could help my future career. Lastly I would like to thank Monash Universty especially Prof. Di Cook and Prof. Rob Hyndman who gave me an opportunity by providing me this internship.  
 
 # References
 

@@ -131,7 +131,7 @@ background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6
 
 # Updated hyperparameter
 
-```{r out.width = '60%', echo = FALSE, fig.align="center"}
+```{r out.width = '63%', echo = FALSE, fig.align="center"}
 knitr::include_graphics(here::here("pic/hyper.png"))
 ```
 
@@ -155,9 +155,11 @@ class: left, top
 
 # Example 3: Zombie Apocalypse
 
-+ A final (and fun!) example is described in the **RPub** "Fundamentals of Bayesian Data Analysis in R", available at https://rpubs.com/klinares/443186. We want to know the probability we have found a vaccine to cure a zombie outbreak. 
++ A final (and fun!) example is described in the **RPub** "Fundamentals of Bayesian Data Analysis in R", available at https://rpubs.com/klinares/443186. 
 
-+ Below we use the code provided in the RPub to generate 13 vaccine outcomes, where a success corresponds to a cure.
++ We want to know the probability we have found a vaccine to cure a zombie outbreak. 
+
++ Below we use the code output provided in the RPub to generate 13 vaccine outcomes, where a success corresponds to a cure.
 
 ```{r , echo = FALSE, message = FALSE, warning = FALSE}
 set.seed(789)
@@ -176,6 +178,7 @@ data
 mean(data) # our posterior is close to our theorized probability of success of .15
 sum(data) # number of successes
 ```
+
 
 ---
 background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
@@ -197,6 +200,19 @@ class: center, middle
 knitr::include_graphics(here::here("pic/appo.png"))
 ```
 ---
+
+background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
+
+class: left, top
+
+# Conclusion
+
++ Building a package is not a easy job, especially when the package needs to develop  from scratch.
+
++ However, this has been a good opportunity for me to apply my learning and practice my knowledge, as well as learn some new knowledge. 
+
++ Besides, resolving the errors and the debugging process was quite interesting to learn.
+---
 background-image: url(https://images.unsplash.com/photo-1536514498073-50e69d39c6cf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1742&q=80)
 
 class: center, middle
@@ -204,4 +220,3 @@ class: center, middle
 # Thank You!
 
 ![](https://media2.giphy.com/media/ZrlYxeVZ0zqkU/giphy.gif)
----
