@@ -29,11 +29,13 @@ for the unit ETC4541/ETC5410, Bayesian inference and data analysis. The *conjBay
 # Background and motivation
 
 The *conjBayes* is an R package designed to help students (understand) and apply Conjugate Bayesian models. The project my supervisor had in mind involves creating a package of R programs that she has written to do Markov chain Monte Carlo algorithms to fit various Bayesian statistical models. In particular my supervisor was looking for a package that do 
-1. Beta/ Binomial (Beta/ Bernoulli)
-2. Gamma Exponential 
-3. Gamma/Poisson
-4. Normal/Normal 
-5. Normal Inverse Gamma/ Normal
+
++ Beta/ Binomial (Beta/ Bernoulli)
++ Gamma Exponential 
++ Gamma/Poisson
++ Normal/Normal 
++ Normal Inverse Gamma/ Normal
+
 She also wanted to have a vignettes. Therefore, my job was to help my supervisor develop the *conjBayes* package and help her converting the format of documentation and unit tests, as well as creating the vignette.
 
 
